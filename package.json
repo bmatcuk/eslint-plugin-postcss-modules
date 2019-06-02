@@ -1,0 +1,77 @@
+{
+  "name": "eslint-plugin-postcss-modules",
+  "version": "1.0.0",
+  "description": "Checks that you are using the classes exported by your css modules using postcss.",
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "postcss",
+    "css-modules"
+  ],
+  "repository": "git@github.com:bmatcuk/eslint-plugin-postcss-modules.git",
+  "author": "Bob Matcuk <bmatcuk@gmail.com> (https://squeg.net)",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "prepare": "yarn run build",
+    "test": "jest --coverage"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{j,t}s?(x)": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "peerDependencies": {
+    "eslint": ">=0.8.0"
+  },
+  "devDependencies": {
+    "@types/anymatch": "~1.3.1",
+    "@types/cosmiconfig": "~5.0.3",
+    "@types/deasync": "~0.1.0",
+    "@types/eslint": "~4.16.6",
+    "@types/icss-utils": "~4.1.0",
+    "@types/jest": "~24.0.13",
+    "@types/node": "~12.0.4",
+    "@types/postcss-load-config": "~2.0.0",
+    "@types/postcss-modules-local-by-default": "~1.2.0",
+    "@types/postcss-modules-scope": "~1.1.0",
+    "@types/postcss-modules-values": "~3.0.0",
+    "@typescript-eslint/eslint-plugin": "~1.9.0",
+    "@typescript-eslint/parser": "~1.9.0",
+    "eslint": "~5.16.0",
+    "eslint-config-prettier": "~4.3.0",
+    "eslint-plugin-jest": "~22.6.4",
+    "eslint-plugin-prettier": "~3.1.0",
+    "eslint_d": "~7.3.0",
+    "husky": "~2.4.1",
+    "jest": "~24.8.0",
+    "jest-junit": "~6.4.0",
+    "lint-staged": "~8.2.1",
+    "prettier": "~1.17.1",
+    "ts-jest": "~24.0.2",
+    "typescript": "~3.5.1"
+  },
+  "dependencies": {
+    "anymatch": "^3.0.0",
+    "camelcase": "^5.0.0",
+    "deasync": "^0.1.0",
+    "icss-utils": "^4.1.0",
+    "postcss": "^7.0.0",
+    "postcss-load-config": "^2.1.0",
+    "postcss-modules-local-by-default": "^2.0.6",
+    "postcss-modules-scope": "^2.1.0",
+    "postcss-modules-values": "^2.0.0"
+  }
+}

@@ -1,0 +1,19 @@
+:global(.global-class) {
+  color: red;
+
+  .word {
+    background: green;
+  }
+}
+
+.dashed-class {
+  color: green;
+
+  &.underscore_class {
+    background: green;
+  }
+}
+
+:global .global-class :local .camelCaseClass {
+  color: green;
+}
