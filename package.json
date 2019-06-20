@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-postcss-modules",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Checks that you are using the classes exported by your css modules using postcss.",
   "keywords": [
     "eslint",
@@ -8,7 +8,10 @@
     "postcss",
     "css-modules"
   ],
-  "repository": "git@github.com:bmatcuk/eslint-plugin-postcss-modules.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bmatcuk/eslint-plugin-postcss-modules"
+  },
   "author": "Bob Matcuk <bmatcuk@gmail.com> (https://squeg.net)",
   "license": "MIT",
   "main": "dist/index.js",
@@ -20,7 +23,8 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "prepare": "yarn run build",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "watch": "tsc -w -p tsconfig.build.json"
   },
   "husky": {
     "hooks": {

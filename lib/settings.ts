@@ -17,7 +17,7 @@ export default class Settings implements SettingsObject {
   readonly camelCase: SettingsObject["camelCase"]
   readonly defaultScope: SettingsObject["defaultScope"]
   readonly include: SettingsObject["include"]
-  readonly exclude?: SettingsObject["exclude"]
+  readonly exclude: SettingsObject["exclude"]
 
   /**
    * Construct a Settings object
@@ -34,7 +34,7 @@ export default class Settings implements SettingsObject {
       typeof settings.camelCase !== "undefined" ? settings.camelCase : false
     this.defaultScope = settings.defaultScope || LocalScope
     this.include = settings.include || /\.css$/
-    this.exclude = settings.exclude
+    this.exclude = settings.exclude || /\/node_modules\//
   }
 
   /**

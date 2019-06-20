@@ -37,6 +37,9 @@ export interface SettingsObject {
    */
   include: Matcher
 
-  /** Files to exclude for processing, compared using anymatch */
-  exclude?: Matcher
+  /**
+   * Files to exclude for processing, compared using anymatch
+   * Defaults to /\/node_modules\//
+   */
+  exclude: Matcher
 }

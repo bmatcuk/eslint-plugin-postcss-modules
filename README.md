@@ -54,7 +54,7 @@ examples of the options and their default values:
       "camelCase": false,
       "defaultScope": "local",
       "include": /\.css$/,
-      "exclude": null
+      "exclude": /\/node_modules\//
     },
   }
 }
@@ -104,7 +104,7 @@ examples of the options and their default values:
   > css-module exports. Any file which matches _include_ but does not match
   > _exclude_ will be parsed.
 
-* **exclude** _(default: `null`)_
+* **exclude** _(default: `/\/node_modules\//`)_
   > An [anymatch] matcher to determine what files should _not_ be parsed for
   > css-module exports. Any file which matches _include_ but does not match
   > _exclude_ will be parsed.
