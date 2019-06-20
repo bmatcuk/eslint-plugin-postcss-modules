@@ -11,7 +11,8 @@ describe("Parser", () => {
 
   beforeEach(() => {
     context.settings = {}
-    context.getFilename = jest.fn(() => __dirname)
+    context.getFilename = () =>
+      path.resolve(__dirname, "..", "lib", "parser.ts")
   })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

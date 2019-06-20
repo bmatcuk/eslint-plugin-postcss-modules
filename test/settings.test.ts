@@ -9,7 +9,7 @@ describe("Settings", () => {
 
   beforeEach(() => {
     context.settings = {}
-    context.getFilename = jest.fn(() => __filename)
+    context.getFilename = () => __filename
   })
 
   test("Default Settings", () => {
@@ -21,7 +21,7 @@ describe("Settings", () => {
     expect(settings).toHaveProperty("camelCase", false)
     expect(settings).toHaveProperty("defaultScope", LocalScope)
     expect(settings).toHaveProperty("include", /\.css$/)
-    expect(settings).toHaveProperty("exclude", undefined)
+    expect(settings).toHaveProperty("exclude", /\/node_modules\//)
   })
 
   test("Specifying Options", () => {

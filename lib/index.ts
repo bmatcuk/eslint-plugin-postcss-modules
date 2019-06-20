@@ -5,6 +5,7 @@ export const configs = {
     plugins: ["postcss-modules"],
     rules: {
       "postcss-modules/no-undef-class": "error",
+      "postcss-modules/no-unused-class": "warn",
     },
   },
 }
