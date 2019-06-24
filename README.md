@@ -1,4 +1,4 @@
-![Release](https://img.shields.io/npm/v/eslint-plugin-postcss-modules.svg)
+[![Release](https://img.shields.io/npm/v/eslint-plugin-postcss-modules.svg)](https://www.npmjs.com/package/eslint-plugin-postcss-modules)
 [![Build Status](https://travis-ci.com/bmatcuk/eslint-plugin-postcss-modules.svg?branch=master)](https://travis-ci.com/bmatcuk/eslint-plugin-postcss-modules)
 [![codecov.io](https://img.shields.io/codecov/c/github/bmatcuk/eslint-plugin-postcss-modules.svg?branch=master)](https://codecov.io/github/bmatcuk/eslint-plugin-postcss-modules?branch=master)
 
@@ -39,6 +39,18 @@ In your eslint config:
   "extends": [
     "plugin:postcss-modules/recommended"
   ],
+}
+```
+
+The recommended configuration will set `no-undef-class` to errors and
+`no-unused-class` to warnings. The recommended configuration is equivalent to:
+```json
+{
+  "plugins": ["postcss-modules"],
+  "rules": {
+    "postcss-modules/no-undef-class": "error",
+    "postcss-modules/no-unused-class": "warn"
+  }
 }
 ```
 
