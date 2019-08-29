@@ -140,13 +140,15 @@ describe("Cache", () => {
   })
 
   describe("processMemberExpression", () => {
+    let cache: Cache
+
     const baseFilename = "test.css"
     const specifier = "styles"
     const classes = new Set(["class1", "class2", "class3"])
 
     beforeEach(() => {
+      cache = buildCache()
       // warm the cache
-      const cache = buildCache()
       const node = buildImportDeclaration(baseFilename, [
         buildImportDefaultSpecifier(specifier),
       ])
@@ -156,20 +158,17 @@ describe("Cache", () => {
     })
 
     test("improper node", () => {
-      const cache = buildCache()
       const node = ({ type: "WrongNode" } as unknown) as ESTree.Node
       expect(cache.processMemberExpression(node)).toBeNull()
     })
 
     test("uninteresting variable", () => {
-      const cache = buildCache()
       const node = buildMemberExpression("unknownVariable", "property", false)
       expect(cache.processMemberExpression(node)).toBeNull()
     })
 
     test("computed variable", () => {
       const className = "class1"
-      const cache = buildCache()
       const node = buildMemberExpression("styles", className, true)
       const result = cache.processMemberExpression(node)
       expect(result).not.toBeNull()
@@ -181,7 +180,6 @@ describe("Cache", () => {
 
     test("non-computed variable", () => {
       const className = "class1"
-      const cache = buildCache()
       const node = buildMemberExpression("styles", className, false)
       const result = cache.processMemberExpression(node)
       expect(result).not.toBeNull()
