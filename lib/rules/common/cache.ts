@@ -92,7 +92,7 @@ export interface ProcessedMemberExpression {
 /** This class is used to cache the results of processing a css file */
 export class Cache {
   private static baseFilenameToClasses: BaseFilenameToClasses = {}
-  private static specifierToClasses: SpecifierToClasses = {}
+  private specifierToClasses: SpecifierToClasses = {}
   private settings: Settings
   private parser: Parser
 
@@ -103,12 +103,12 @@ export class Cache {
   constructor(context: Rule.RuleContext) {
     this.settings = new Settings(context)
     this.parser = new Parser(this.settings)
+    this.specifierToClasses = {}
   }
 
   /** Clear the cache */
   static clear(): void {
     Cache.baseFilenameToClasses = {}
-    Cache.specifierToClasses = {}
   }
 
   /**
@@ -159,7 +159,7 @@ export class Cache {
         ? Cache.baseFilenameToClasses[baseFilename].classes
         : this.parser.parse(filename)
     if (specifier) {
-      Cache.specifierToClasses[specifier] = {
+      this.specifierToClasses[specifier] = {
         baseFilename,
         classes,
       }
@@ -193,11 +193,11 @@ export class Cache {
     }
 
     const objectName = (node.object as ESTree.Identifier).name
-    if (Cache.specifierToClasses[objectName] === undefined) {
+    if (this.specifierToClasses[objectName] === undefined) {
       return null
     }
 
-    const { baseFilename, classes } = Cache.specifierToClasses[objectName]
+    const { baseFilename, classes } = this.specifierToClasses[objectName]
     const className = node.computed
       ? (node.property as ESTree.Literal).value
       : (node.property as ESTree.Identifier).name
