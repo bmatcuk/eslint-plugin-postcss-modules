@@ -44,7 +44,7 @@ export interface BaseFilenameToClasses {
 /** Maps specifiers to their base filename and the classes it exports */
 export interface SpecifierToClasses {
   [key: string]: {
-    baseFilename: string
+    filename: string
     classes: ReadonlySet<string>
   }
 }
@@ -54,8 +54,8 @@ export interface ProcessedImportDeclaration {
   /** The ImportDeclaration node */
   node: ESTree.ImportDeclaration
 
-  /** Base filename that was imported */
-  baseFilename: string
+  /** Filename that was imported */
+  filename: string
 
   /**
    * The name of the import in casse like:
@@ -79,8 +79,8 @@ export interface ProcessedMemberExpression {
   /** The MemberExpression node */
   node: ESTree.MemberExpression
 
-  /** Base filename that corresponds to this member expression */
-  baseFilename: string
+  /** Filename that corresponds to this member expression */
+  filename: string
 
   /** Class Name referenced by this member expression */
   className: string
@@ -91,8 +91,8 @@ export interface ProcessedMemberExpression {
 
 /** This class is used to cache the results of processing a css file */
 export class Cache {
-  private static baseFilenameToClasses: BaseFilenameToClasses = {}
-  private specifierToClasses: SpecifierToClasses = {}
+  private static filenameToClasses: BaseFilenameToClasses = {}
+  private specifierToClasses: SpecifierToClasses
   private settings: Settings
   private parser: Parser
 
@@ -108,7 +108,7 @@ export class Cache {
 
   /** Clear the cache */
   static clear(): void {
-    Cache.baseFilenameToClasses = {}
+    Cache.filenameToClasses = {}
   }
 
   /**
@@ -155,17 +155,17 @@ export class Cache {
     })
 
     const classes =
-      Cache.baseFilenameToClasses[baseFilename] !== undefined
-        ? Cache.baseFilenameToClasses[baseFilename].classes
+      Cache.filenameToClasses[filename] !== undefined
+        ? Cache.filenameToClasses[filename].classes
         : this.parser.parse(filename)
     if (specifier) {
       this.specifierToClasses[specifier] = {
-        baseFilename,
+        filename,
         classes,
       }
     }
-    if (Cache.baseFilenameToClasses[baseFilename] === undefined) {
-      Cache.baseFilenameToClasses[baseFilename] = {
+    if (Cache.filenameToClasses[filename] === undefined) {
+      Cache.filenameToClasses[filename] = {
         node,
         classes,
       }
@@ -173,7 +173,7 @@ export class Cache {
 
     return {
       node,
-      baseFilename,
+      filename,
       specifier,
       explicitImports,
       classes,
@@ -197,7 +197,7 @@ export class Cache {
       return null
     }
 
-    const { baseFilename, classes } = this.specifierToClasses[objectName]
+    const { filename, classes } = this.specifierToClasses[objectName]
     const className = node.computed
       ? (node.property as ESTree.Literal).value
       : (node.property as ESTree.Identifier).name
@@ -207,7 +207,7 @@ export class Cache {
 
     return {
       node,
-      baseFilename,
+      filename,
       className: className.toString(),
       classes,
     }

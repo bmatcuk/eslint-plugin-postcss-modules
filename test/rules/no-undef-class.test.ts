@@ -32,7 +32,7 @@ describe("no-undef-class", () => {
   } as unknown) as Rule.RuleContext
   const rule = noUndefClass.create(context)
   const node = ({} as unknown) as ESTree.Node
-  const baseFilename = "test.css"
+  const filename = "test.css"
   const specifier = "styles"
   const classes = new Set(["class1", "class2", "class3"])
 
@@ -48,7 +48,7 @@ describe("no-undef-class", () => {
     ): void => {
       processImportDeclarationMock.mockReturnValueOnce({
         node: node as ESTree.ImportDeclaration,
-        baseFilename,
+        filename,
         specifier,
         explicitImports: explicitImports.map(s => buildImportSpecifier(s)),
         classes,
@@ -86,7 +86,7 @@ describe("no-undef-class", () => {
             messageId: "undefinedClassName",
             node: expect.any(Object),
             data: {
-              baseFilename,
+              filename,
               className,
             },
           })
@@ -99,7 +99,7 @@ describe("no-undef-class", () => {
     const mockProcessMemberExpression = (className: string): void => {
       processMemberExpressionMock.mockReturnValueOnce({
         node: node as ESTree.MemberExpression,
-        baseFilename,
+        filename,
         className,
         classes,
       })
@@ -132,7 +132,7 @@ describe("no-undef-class", () => {
         messageId: "undefinedClassName",
         node: expect.any(Object),
         data: {
-          baseFilename,
+          filename,
           className: unknownClass,
         },
       })

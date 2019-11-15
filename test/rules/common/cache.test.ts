@@ -81,13 +81,13 @@ describe("Cache", () => {
     })
 
     test("cold cache", () => {
-      const baseFilename = "test.css"
+      const filename = "test.css"
       const specifier = "styles"
       const explicitImports = [buildImportSpecifier("class1")]
       const classes = new Set(["class1", "class2", "class3"])
 
       const cache = buildCache()
-      const node = buildImportDeclaration(baseFilename, [
+      const node = buildImportDeclaration(filename, [
         buildImportDefaultSpecifier(specifier),
         ...explicitImports,
       ])
@@ -97,20 +97,23 @@ describe("Cache", () => {
       expect(parseMock).toHaveBeenCalledTimes(1)
       expect(result).not.toBeNull()
       expect(result).toHaveProperty("node", node)
-      expect(result).toHaveProperty("baseFilename", baseFilename)
+      expect(result).toHaveProperty(
+        "filename",
+        expect.stringMatching(new RegExp(`${filename}$$`))
+      )
       expect(result).toHaveProperty("specifier", specifier)
       expect(result).toHaveProperty("explicitImports", explicitImports)
       expect(result).toHaveProperty("classes", classes)
     })
 
     test("warm cache", () => {
-      const baseFilename = "test.css"
+      const filename = "test.css"
       const specifier = "styles"
       const explicitImports = [buildImportSpecifier("class1")]
       const classes = new Set(["class1", "class2", "class3"])
 
       const cache = buildCache()
-      const node = buildImportDeclaration(baseFilename, [
+      const node = buildImportDeclaration(filename, [
         buildImportNamespaceSpecifier(specifier),
         ...explicitImports,
       ])
@@ -124,7 +127,7 @@ describe("Cache", () => {
       const explicitImports2 = [buildImportSpecifier("class2")]
 
       const cache2 = buildCache()
-      const node2 = buildImportDeclaration(baseFilename, [
+      const node2 = buildImportDeclaration(filename, [
         buildImportDefaultSpecifier(specifier2),
         ...explicitImports2,
       ])
@@ -132,7 +135,10 @@ describe("Cache", () => {
       expect(parseMock).not.toHaveBeenCalled()
       expect(result).not.toBeNull()
       expect(result).toHaveProperty("node", node2)
-      expect(result).toHaveProperty("baseFilename", baseFilename)
+      expect(result).toHaveProperty(
+        "filename",
+        expect.stringMatching(new RegExp(`${filename}$$`))
+      )
       expect(result).toHaveProperty("specifier", specifier2)
       expect(result).toHaveProperty("explicitImports", explicitImports2)
       expect(result).toHaveProperty("classes", classes)
@@ -142,14 +148,14 @@ describe("Cache", () => {
   describe("processMemberExpression", () => {
     let cache: Cache
 
-    const baseFilename = "test.css"
+    const filename = "test.css"
     const specifier = "styles"
     const classes = new Set(["class1", "class2", "class3"])
 
     beforeEach(() => {
       cache = buildCache()
       // warm the cache
-      const node = buildImportDeclaration(baseFilename, [
+      const node = buildImportDeclaration(filename, [
         buildImportDefaultSpecifier(specifier),
       ])
       parseMock.mockReturnValueOnce(classes)
@@ -173,7 +179,10 @@ describe("Cache", () => {
       const result = cache.processMemberExpression(node)
       expect(result).not.toBeNull()
       expect(result).toHaveProperty("node", node)
-      expect(result).toHaveProperty("baseFilename", baseFilename)
+      expect(result).toHaveProperty(
+        "filename",
+        expect.stringMatching(new RegExp(`${filename}$$`))
+      )
       expect(result).toHaveProperty("className", className)
       expect(result).toHaveProperty("classes", classes)
     })
@@ -184,7 +193,10 @@ describe("Cache", () => {
       const result = cache.processMemberExpression(node)
       expect(result).not.toBeNull()
       expect(result).toHaveProperty("node", node)
-      expect(result).toHaveProperty("baseFilename", baseFilename)
+      expect(result).toHaveProperty(
+        "filename",
+        expect.stringMatching(new RegExp(`${filename}$$`))
+      )
       expect(result).toHaveProperty("className", className)
       expect(result).toHaveProperty("classes", classes)
     })

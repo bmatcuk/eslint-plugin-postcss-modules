@@ -9,7 +9,7 @@ import { Cache, createRule } from "./common"
 export default createRule({
   description: "Ensures that any referenced class is exported by css files.",
   messages: {
-    undefinedClassName: "{{ className }} does not exist in {{ baseFilename }}",
+    undefinedClassName: "{{ className }} does not exist in {{ filename }}",
   },
   create: context => {
     const cache = new Cache(context)
@@ -21,7 +21,7 @@ export default createRule({
           return
         }
 
-        const { baseFilename, classes, explicitImports } = result
+        const { filename, classes, explicitImports } = result
         explicitImports.forEach(node => {
           const className = node.imported.name
           if (!classes.has(className)) {
@@ -29,7 +29,7 @@ export default createRule({
               messageId: "undefinedClassName",
               node,
               data: {
-                baseFilename,
+                filename,
                 className,
               },
             })
@@ -43,13 +43,13 @@ export default createRule({
           return
         }
 
-        const { baseFilename, className, classes } = result
+        const { filename, className, classes } = result
         if (!classes.has(className) && !className.startsWith("_")) {
           context.report({
             messageId: "undefinedClassName",
             node,
             data: {
-              baseFilename,
+              filename,
               className,
             },
           })

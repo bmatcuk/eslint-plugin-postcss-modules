@@ -33,7 +33,7 @@ export default createRule({
   },
   create: context => {
     const cache = new Cache(context)
-    const baseFilenameToUnusedClasses: {
+    const filenameToUnusedClasses: {
       [key: string]: {
         importNode: ESTree.ImportDeclaration
         unusedClasses: Set<string>
@@ -47,23 +47,18 @@ export default createRule({
           return
         }
 
-        const {
-          node: importNode,
-          baseFilename,
-          classes,
-          explicitImports,
-        } = result
+        const { node: importNode, filename, classes, explicitImports } = result
         const unusedClasses =
-          baseFilenameToUnusedClasses[baseFilename] !== undefined
-            ? baseFilenameToUnusedClasses[baseFilename].unusedClasses
+          filenameToUnusedClasses[filename] !== undefined
+            ? filenameToUnusedClasses[filename].unusedClasses
             : new Set(classes)
         explicitImports.forEach(node => {
           const className = node.imported.name
           unusedClasses.delete(className)
         })
 
-        if (baseFilenameToUnusedClasses[baseFilename] === undefined) {
-          baseFilenameToUnusedClasses[baseFilename] = {
+        if (filenameToUnusedClasses[filename] === undefined) {
+          filenameToUnusedClasses[filename] = {
             importNode,
             unusedClasses,
           }
@@ -76,18 +71,16 @@ export default createRule({
           return
         }
 
-        const { baseFilename, className } = result
-        if (baseFilenameToUnusedClasses[baseFilename]) {
-          baseFilenameToUnusedClasses[baseFilename].unusedClasses.delete(
-            className
-          )
+        const { filename, className } = result
+        if (filenameToUnusedClasses[filename]) {
+          filenameToUnusedClasses[filename].unusedClasses.delete(className)
         }
       },
 
       "Program:exit": () => {
-        Object.keys(baseFilenameToUnusedClasses).forEach(baseFilename => {
-          const { importNode, unusedClasses } = baseFilenameToUnusedClasses[
-            baseFilename
+        Object.keys(filenameToUnusedClasses).forEach(filename => {
+          const { importNode, unusedClasses } = filenameToUnusedClasses[
+            filename
           ]
           if (unusedClasses.size > 0) {
             const classNames = joinClassNames(Array.from(unusedClasses))
