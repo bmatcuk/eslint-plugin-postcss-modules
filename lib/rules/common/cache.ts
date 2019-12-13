@@ -35,10 +35,7 @@ export const nodeIsMemberExpression = (
 
 /** Maps base filenames to their import declaration and exported classes */
 export interface BaseFilenameToClasses {
-  [key: string]: {
-    node: ESTree.Node
-    classes: ReadonlySet<string>
-  }
+  [key: string]: ReadonlySet<string>
 }
 
 /** Maps specifiers to their base filename and the classes it exports */
@@ -156,7 +153,7 @@ export class Cache {
 
     const classes =
       Cache.filenameToClasses[filename] !== undefined
-        ? Cache.filenameToClasses[filename].classes
+        ? Cache.filenameToClasses[filename]
         : this.parser.parse(filename)
     if (specifier) {
       this.specifierToClasses[specifier] = {
@@ -165,10 +162,7 @@ export class Cache {
       }
     }
     if (Cache.filenameToClasses[filename] === undefined) {
-      Cache.filenameToClasses[filename] = {
-        node,
-        classes,
-      }
+      Cache.filenameToClasses[filename] = classes
     }
 
     return {
