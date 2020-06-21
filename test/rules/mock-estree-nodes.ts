@@ -14,7 +14,8 @@ export const buildImportDeclaration = (
   specifiers: (
     | ESTree.ImportSpecifier
     | ESTree.ImportDefaultSpecifier
-    | ESTree.ImportNamespaceSpecifier)[] = []
+    | ESTree.ImportNamespaceSpecifier
+  )[] = []
 ): ESTree.ImportDeclaration => ({
   type: "ImportDeclaration",
   source: { type: "Literal", value: source },

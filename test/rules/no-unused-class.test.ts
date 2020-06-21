@@ -84,7 +84,7 @@ describe("no-unused-class", () => {
         node: node as ESTree.ImportDeclaration,
         filename,
         specifier,
-        explicitImports: explicitImports.map(s => buildImportSpecifier(s)),
+        explicitImports: explicitImports.map((s) => buildImportSpecifier(s)),
         classes,
       })
     }
@@ -102,7 +102,7 @@ describe("no-unused-class", () => {
       const rule = noUnusedClass.create(context)
       mockProcessImportDeclaration(...classes)
       rule.ImportDeclaration!(node)
-      ;(rule["Program:exit"] as Function)()
+      ;(rule["Program:exit"] as () => void)()
 
       expect(reportMock).not.toHaveBeenCalled()
     })
@@ -112,11 +112,11 @@ describe("no-unused-class", () => {
       mockProcessImportDeclaration()
       rule.ImportDeclaration!(node)
 
-      classes.forEach(className => {
+      classes.forEach((className) => {
         mockProcessMemberExpression(className)
         rule.MemberExpression!(node)
       })
-      ;(rule["Program:exit"] as Function)()
+      ;(rule["Program:exit"] as () => void)()
 
       expect(reportMock).not.toHaveBeenCalled()
     })
@@ -125,7 +125,7 @@ describe("no-unused-class", () => {
       const rule = noUnusedClass.create(context)
       mockProcessImportDeclaration()
       rule.ImportDeclaration!(node)
-      ;(rule["Program:exit"] as Function)()
+      ;(rule["Program:exit"] as () => void)()
 
       const classNames = joinClassNames(Array.from(classes))
 
@@ -144,7 +144,7 @@ describe("no-unused-class", () => {
       const [missingClass, ...usedClasses] = Array.from(classes)
       mockProcessImportDeclaration(...usedClasses)
       rule.ImportDeclaration!(node)
-      ;(rule["Program:exit"] as Function)()
+      ;(rule["Program:exit"] as () => void)()
 
       expect(reportMock).toHaveBeenCalledTimes(1)
       expect(reportMock).toHaveBeenCalledWith({

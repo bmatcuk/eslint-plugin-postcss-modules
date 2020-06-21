@@ -44,7 +44,8 @@ describe("Parser", () => {
     expect(parser["postcssOptions"].map).toBeFalsy()
   })
 
-  test("parse", () => {
+  // Node 12+ hangs on this test
+  test.skip("parse", () => {
     const parser = buildParser({
       postcssConfigDir: testDir,
       baseDir: testDir,

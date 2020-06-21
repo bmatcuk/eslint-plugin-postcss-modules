@@ -11,10 +11,16 @@ export default createRule({
   messages: {
     undefinedClassName: "{{ className }} does not exist in {{ filename }}",
   },
-  create: context => {
+  create: (context) => {
     const cache = new Cache(context)
 
     return {
+      Program: () => {
+        // Long-running eslint processes (ex: vscode-eslint) will cause the
+        // cache to stick around between runs, so we need to clear it.
+        Cache.clear()
+      },
+
       ImportDeclaration: (node: ESTree.Node) => {
         const result = cache.processImportDeclaration(node)
         if (result === null) {
@@ -22,7 +28,7 @@ export default createRule({
         }
 
         const { filename, classes, explicitImports } = result
-        explicitImports.forEach(node => {
+        explicitImports.forEach((node) => {
           const className = node.imported.name
           if (!classes.has(className)) {
             context.report({

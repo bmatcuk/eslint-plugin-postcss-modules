@@ -42,7 +42,7 @@ export default class Parser {
         postcssScope({
           // we don't need to mangle the names; all we care about are the
           // unmangled names
-          generateScopedName: name => name,
+          generateScopedName: (name) => name,
         })
       )
   }
@@ -111,7 +111,7 @@ export default class Parser {
       this.settings.camelCase === "camelCase" ||
       this.settings.camelCase === "camelCaseOnly" ||
       this.settings.camelCase === "only"
-        ? classNames.map(cn => camelcase(cn))
+        ? classNames.map((cn) => camelcase(cn))
         : classNames.map(this.convertDashesToCamelCase)
     if (
       this.settings.camelCase === "camelCaseOnly" ||

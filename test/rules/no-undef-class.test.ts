@@ -50,7 +50,7 @@ describe("no-undef-class", () => {
         node: node as ESTree.ImportDeclaration,
         filename,
         specifier,
-        explicitImports: explicitImports.map(s => buildImportSpecifier(s)),
+        explicitImports: explicitImports.map((s) => buildImportSpecifier(s)),
         classes,
       })
     }

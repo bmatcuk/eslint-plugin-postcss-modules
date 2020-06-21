@@ -31,7 +31,7 @@ export default createRule({
     unusedClassName: "Class {{ classNames }} is exported but unused.",
     unusedClassNames: "Classes {{ classNames }} are exported but unused.",
   },
-  create: context => {
+  create: (context) => {
     const cache = new Cache(context)
     const filenameToUnusedClasses: {
       [key: string]: {
@@ -41,6 +41,12 @@ export default createRule({
     } = {}
 
     return {
+      Program: () => {
+        // Long-running eslint processes (ex: vscode-eslint) will cause the
+        // cache to stick around between runs, so we need to clear it.
+        Cache.clear()
+      },
+
       ImportDeclaration: (node: ESTree.Node) => {
         const result = cache.processImportDeclaration(node)
         if (result === null) {
@@ -52,7 +58,7 @@ export default createRule({
           filenameToUnusedClasses[filename] !== undefined
             ? filenameToUnusedClasses[filename].unusedClasses
             : new Set(classes)
-        explicitImports.forEach(node => {
+        explicitImports.forEach((node) => {
           const className = node.imported.name
           unusedClasses.delete(className)
         })
@@ -78,7 +84,7 @@ export default createRule({
       },
 
       "Program:exit": () => {
-        Object.keys(filenameToUnusedClasses).forEach(filename => {
+        Object.keys(filenameToUnusedClasses).forEach((filename) => {
           const { importNode, unusedClasses } = filenameToUnusedClasses[
             filename
           ]

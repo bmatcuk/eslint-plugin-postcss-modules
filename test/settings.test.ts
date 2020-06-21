@@ -5,7 +5,7 @@ import Settings from "settings"
 import { LocalScope } from "types"
 
 describe("Settings", () => {
-  let context: Rule.RuleContext = ({} as unknown) as Rule.RuleContext
+  const context: Rule.RuleContext = ({} as unknown) as Rule.RuleContext
 
   beforeEach(() => {
     context.settings = {}

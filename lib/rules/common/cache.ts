@@ -137,7 +137,7 @@ export class Cache {
 
     const explicitImports: ESTree.ImportSpecifier[] = []
     let specifier: string | null = null
-    node.specifiers.forEach(spec => {
+    node.specifiers.forEach((spec) => {
       if (nodeIsImportSpecifier(spec)) {
         // import { a, b, c, ... } from '...'
         explicitImports.push(spec)

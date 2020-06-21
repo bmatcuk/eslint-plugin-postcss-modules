@@ -6,11 +6,11 @@ export default <T>(promise: { then: Promise<T>["then"] }): T => {
   let err: Error | null = null
 
   promise.then(
-    r => {
+    (r) => {
       result = r
       done = true
     },
-    e => {
+    (e) => {
       err = e
       done = true
     }
