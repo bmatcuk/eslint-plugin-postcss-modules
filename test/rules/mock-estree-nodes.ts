@@ -81,6 +81,7 @@ export const buildMemberExpression = (
 ): ESTree.MemberExpression => ({
   type: "MemberExpression",
   object: { type: "Identifier", name },
+  optional: false,
   computed,
   property: computed
     ? { type: "Literal", value: property }
