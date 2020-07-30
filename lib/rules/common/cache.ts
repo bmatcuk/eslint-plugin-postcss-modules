@@ -35,14 +35,14 @@ export const nodeIsMemberExpression = (
 
 /** Maps base filenames to their import declaration and exported classes */
 export interface BaseFilenameToClasses {
-  [key: string]: ReadonlySet<string>
+  [key: string]: ReadonlyMap<string, string[]>
 }
 
 /** Maps specifiers to their base filename and the classes it exports */
 export interface SpecifierToClasses {
   [key: string]: {
     filename: string
-    classes: ReadonlySet<string>
+    classes: ReadonlyMap<string, string[]>
   }
 }
 
@@ -68,7 +68,7 @@ export interface ProcessedImportDeclaration {
   explicitImports: ESTree.ImportSpecifier[]
 
   /** Classes that are exported by the file */
-  classes: ReadonlySet<string>
+  classes: ReadonlyMap<string, string[]>
 }
 
 /** Return value from processMemberExpression */
@@ -83,7 +83,7 @@ export interface ProcessedMemberExpression {
   className: string
 
   /** Classes exported by the file */
-  classes: ReadonlySet<string>
+  classes: ReadonlyMap<string, string[]>
 }
 
 /** This class is used to cache the results of processing a css file */

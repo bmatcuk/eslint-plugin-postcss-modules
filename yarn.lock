@@ -613,6 +613,13 @@
     cosmiconfig "^6.0.0"
     postcss "^7.0.0"
 
+"@types/postcss-modules-extract-imports@~2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/postcss-modules-extract-imports/-/postcss-modules-extract-imports-2.0.0.tgz#ebce2a52f47ee0aa53f4304cafceaee36ec048fe"
+  integrity sha512-wRNIQUPbH2o8d+4DxXDu+mfc/KusCsFRqH4026D5zhtJK6P/UQvkLmkfYwVFuH3TBRuO+Ko/YHgqUFQSpas3Xw==
+  dependencies:
+    postcss "7.x.x"
+
 "@types/postcss-modules-local-by-default@~1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@types/postcss-modules-local-by-default/-/postcss-modules-local-by-default-1.2.0.tgz#961be60a1a01ac0e9beab997b603e18bd9e0dbf5"
@@ -3625,6 +3632,13 @@ postcss-load-config@^2.1.0:
     cosmiconfig "^5.0.0"
     import-cwd "^2.0.0"
 
+postcss-modules-extract-imports@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/postcss-modules-extract-imports/-/postcss-modules-extract-imports-2.0.0.tgz#818719a1ae1da325f9832446b01136eeb493cd7e"
+  integrity sha512-LaYLDNS4SG8Q5WAWqIJgdHPJrDDr/Lv775rMBFUbgjTz6j34lUznACHcdRWroPvXANP2Vj7yNK57vp9eFqzLWQ==
+  dependencies:
+    postcss "^7.0.5"
+
 postcss-modules-local-by-default@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/postcss-modules-local-by-default/-/postcss-modules-local-by-default-3.0.2.tgz#e8a6561be914aaf3c052876377524ca90dbb7915"
@@ -3665,7 +3679,7 @@ postcss-value-parser@^4.0.0:
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.1.0.tgz#443f6a20ced6481a2bda4fa8532a6e55d789a2cb"
   integrity sha512-97DXOFbQJhk71ne5/Mt6cOu6yxsSfM0QGQyl0L25Gca4yGWEGJaig7l7gbCX623VqTBNGLRLaVUCnNkcedlRSQ==
 
-postcss@7.x.x, postcss@^7.0.0, postcss@^7.0.14, postcss@^7.0.16, postcss@^7.0.6:
+postcss@7.x.x, postcss@^7.0.0, postcss@^7.0.14, postcss@^7.0.16, postcss@^7.0.5, postcss@^7.0.6:
   version "7.0.32"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.32.tgz#4310d6ee347053da3433db2be492883d62cec59d"
   integrity sha512-03eXong5NLnNCD05xscnGKGDZ98CyzoqPSMjOe6SuoQY7Z2hIj0Ld1g/O/UQRuOle2aRtiIRDg9tDcTGAkLfKw==

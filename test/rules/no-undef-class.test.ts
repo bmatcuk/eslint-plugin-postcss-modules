@@ -34,7 +34,11 @@ describe("no-undef-class", () => {
   const node = ({} as unknown) as ESTree.Node
   const filename = "test.css"
   const specifier = "styles"
-  const classes = new Set(["class1", "class2", "class3"])
+  const classes = new Map([
+    ["class1", ["class1"]],
+    ["class2", ["class2"]],
+    ["class3", ["class3", "class2"]],
+  ])
 
   beforeEach(() => {
     processImportDeclarationMock.mockClear()

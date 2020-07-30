@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-postcss-modules",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "Checks that you are using the classes exported by your css modules using postcss.",
   "keywords": [
     "eslint",
@@ -46,6 +46,7 @@
     "@types/jest": "~26.0.0",
     "@types/node": "~14.0.13",
     "@types/postcss-load-config": "~2.0.0",
+    "@types/postcss-modules-extract-imports": "~2.0.0",
     "@types/postcss-modules-local-by-default": "~1.2.0",
     "@types/postcss-modules-scope": "~1.1.0",
     "@types/postcss-modules-values": "~3.0.0",
@@ -73,6 +74,7 @@
     "icss-utils": "^4.1.0",
     "postcss": "^7.0.0",
     "postcss-load-config": "^2.1.0",
+    "postcss-modules-extract-imports": "~2.0.0",
     "postcss-modules-local-by-default": "^3.0.2",
     "postcss-modules-scope": "^2.1.0",
     "postcss-modules-values": "^3.0.0"

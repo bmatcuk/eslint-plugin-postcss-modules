@@ -57,9 +57,10 @@ export default createRule({
         const unusedClasses =
           filenameToUnusedClasses[filename] !== undefined
             ? filenameToUnusedClasses[filename].unusedClasses
-            : new Set(classes)
+            : new Set(classes.keys())
         explicitImports.forEach((node) => {
           const className = node.imported.name
+          classes.get(className)?.forEach((cn) => unusedClasses.delete(cn))
           unusedClasses.delete(className)
         })
 
@@ -77,9 +78,11 @@ export default createRule({
           return
         }
 
-        const { filename, className } = result
+        const { filename, className, classes } = result
         if (filenameToUnusedClasses[filename]) {
-          filenameToUnusedClasses[filename].unusedClasses.delete(className)
+          const unusedClasses = filenameToUnusedClasses[filename].unusedClasses
+          classes.get(className)?.forEach((cn) => unusedClasses.delete(cn))
+          unusedClasses.delete(className)
         }
       },
 

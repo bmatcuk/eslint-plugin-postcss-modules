@@ -17,3 +17,7 @@
 :global .global-class :local .camelCaseClass {
   color: green;
 }
+
+.composed-class {
+  composes: dashed-class;
+}

@@ -1,8 +1,9 @@
 import fs from "fs"
-import postcss, { Processor, ProcessOptions } from "postcss"
+import postcss, { Processor, ProcessOptions, Root } from "postcss"
 import postcssrc from "postcss-load-config"
 import postcssValues from "postcss-modules-values"
 import postcssLocalByDefault from "postcss-modules-local-by-default"
+import postcssExtractImports from "postcss-modules-extract-imports"
 import postcssScope from "postcss-modules-scope"
 import { extractICSS } from "icss-utils"
 import camelcase from "camelcase"
@@ -21,6 +22,7 @@ export default class Parser {
   protected readonly settings: Settings
   protected readonly processor: Processor
   protected readonly postcssOptions: ProcessOptions
+  private syncOk: boolean
 
   /**
    * Creates a Parser.
@@ -28,6 +30,7 @@ export default class Parser {
    */
   constructor(settings: Settings) {
     this.settings = settings
+    this.syncOk = true
 
     const { plugins, options } = this.loadConfig()
     this.processor = postcss(plugins)
@@ -38,6 +41,7 @@ export default class Parser {
     this.processor
       .use(postcssValues)
       .use(postcssLocalByDefault({ mode: this.settings.defaultScope }))
+      .use(postcssExtractImports())
       .use(
         postcssScope({
           // we don't need to mangle the names; all we care about are the
@@ -52,22 +56,40 @@ export default class Parser {
    * extract local class names.
    *
    * @param filename - full path to the file to parse
-   * @returns A set of exported class names
+   * @returns a Map of classes to an arrays of classes. In most cases, this
+   * will be a one-to-one mapping. However, if a class `composes` other
+   * classes, then the class will map to multiple classes.
    */
-  parse(filename: string): ReadonlySet<string> {
+  parse(filename: string): ReadonlyMap<string, string[]> {
     // read the file
     const css = fs.readFileSync(filename)
 
-    // extract local class names - unfortunately, eslint does not support
-    // asynchronous plugins, so we have to make this run synchronously
+    // extract local class names
+    const map = new Map<string, string[]>()
     const options = { ...this.postcssOptions, from: filename }
-    const { root } = sync(this.processor.process(css, options))
+    const root = this.process(css.toString(), options)
     if (root) {
       const { icssExports } = extractICSS(root, false)
-      const classNames = this.convertClassNames(Object.keys(icssExports))
-      return new Set<string>(classNames)
+      Object.entries(icssExports).forEach(([key, value]) => {
+        const classNames = this.convertClassNames(value.split(" "))
+        this.convertClassName(key).forEach((cn) => map.set(cn, classNames))
+      })
     }
-    return new Set<string>()
+    return map
+  }
+
+  private process(css: string, options: ProcessOptions): Root | undefined {
+    // unfortunately, eslint does not support asynchronous plugins, so we have
+    // to make this run synchronously
+    if (this.syncOk) {
+      try {
+        // if we're using any asynchronous postcss plugins, this will throw
+        return this.processor.process(css, options).root
+      } catch (_) {
+        this.syncOk = false
+      }
+    }
+    return sync(this.processor.process(css, options)).root
   }
 
   protected loadConfig(): Pick<
@@ -89,6 +111,39 @@ export default class Parser {
     } catch (err) {
       return { plugins: [], options: { stringifier: () => {}, map: false } }
     }
+  }
+
+  /**
+   * Converts a class name to camelCase according to the options
+   *
+   * @param className - a class name to convert
+   * @returns an array of converted class name(s), according to the camelCase
+   * option.
+   */
+  private convertClassName(className: string): string[] {
+    if (
+      this.settings.camelCase === false ||
+      this.settings.camelCase === "asIs"
+    ) {
+      return [className]
+    }
+
+    const camelCaseClassName =
+      this.settings.camelCase === true ||
+      this.settings.camelCase === "camelCase" ||
+      this.settings.camelCase === "camelCaseOnly" ||
+      this.settings.camelCase === "only"
+        ? camelcase(className)
+        : this.convertDashesToCamelCase(className)
+    if (
+      this.settings.camelCase === "camelCaseOnly" ||
+      this.settings.camelCase === "dashesOnly" ||
+      this.settings.camelCase === "only"
+    ) {
+      return [camelCaseClassName]
+    }
+
+    return [className, camelCaseClassName]
   }
 
   /**

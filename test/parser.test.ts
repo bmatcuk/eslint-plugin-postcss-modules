@@ -26,7 +26,7 @@ describe("Parser", () => {
     expect(parser).toHaveProperty("settings")
 
     expect(parser).toHaveProperty("processor")
-    expect(parser["processor"].plugins).toHaveLength(3)
+    expect(parser["processor"].plugins).toHaveLength(4)
 
     expect(parser).toHaveProperty("postcssOptions")
     expect(parser["postcssOptions"]).toMatchObject({
@@ -40,21 +40,27 @@ describe("Parser", () => {
       postcssConfigDir: testDir,
     })
 
-    expect(parser["processor"].plugins).toHaveLength(4)
+    expect(parser["processor"].plugins).toHaveLength(5)
     expect(parser["postcssOptions"].map).toBeFalsy()
   })
 
   // Node 12+ hangs on this test
-  test.skip("parse", () => {
+  test("parse", () => {
     const parser = buildParser({
       postcssConfigDir: testDir,
       baseDir: testDir,
     })
     const classes = parser.parse(path.resolve(testDir, "test.css"))
+    expect(classes.has("global-class")).toBeFalsy()
     expect(classes.has("dashed-class")).toBeTruthy()
     expect(classes.has("underscore_class")).toBeTruthy()
     expect(classes.has("camelCaseClass")).toBeTruthy()
     expect(classes.has("word")).toBeTruthy()
+    expect(classes.has("composed-class")).toBeTruthy()
+    expect(classes.get("composed-class")).toEqual([
+      "composed-class",
+      "dashed-class",
+    ])
   })
 
   describe("convertClassNames", () => {

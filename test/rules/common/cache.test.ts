@@ -21,9 +21,9 @@ fs.existsSync = existsSyncMock
 
 // mock Parser so these tests don't rely on the correctness of Parser
 const parseMock = jest
-  .fn<Set<string>, [string]>()
+  .fn<Map<string, string[]>, [string]>()
   .mockName("parse")
-  .mockReturnValue(new Set())
+  .mockReturnValue(new Map())
 jest.mock("parser", () =>
   jest.fn(() => ({
     parse: parseMock,
@@ -45,6 +45,12 @@ describe("Cache", () => {
     } as unknown) as Rule.RuleContext
     return new Cache(context)
   }
+
+  const classes = new Map([
+    ["class1", ["class1"]],
+    ["class2", ["class2"]],
+    ["class3", ["class3", "class2"]],
+  ])
 
   describe("processImportDeclaration", () => {
     describe("errors", () => {
@@ -84,7 +90,6 @@ describe("Cache", () => {
       const filename = "test.css"
       const specifier = "styles"
       const explicitImports = [buildImportSpecifier("class1")]
-      const classes = new Set(["class1", "class2", "class3"])
 
       const cache = buildCache()
       const node = buildImportDeclaration(filename, [
@@ -110,7 +115,6 @@ describe("Cache", () => {
       const filename = "test.css"
       const specifier = "styles"
       const explicitImports = [buildImportSpecifier("class1")]
-      const classes = new Set(["class1", "class2", "class3"])
 
       const cache = buildCache()
       const node = buildImportDeclaration(filename, [
@@ -150,7 +154,6 @@ describe("Cache", () => {
 
     const filename = "test.css"
     const specifier = "styles"
-    const classes = new Set(["class1", "class2", "class3"])
 
     beforeEach(() => {
       cache = buildCache()
