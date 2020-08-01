@@ -26,7 +26,7 @@ describe("Parser", () => {
     expect(parser).toHaveProperty("settings")
 
     expect(parser).toHaveProperty("processor")
-    expect(parser["processor"].plugins).toHaveLength(4)
+    expect(parser["processor"].plugins).toHaveLength(6)
 
     expect(parser).toHaveProperty("postcssOptions")
     expect(parser["postcssOptions"]).toMatchObject({
@@ -40,7 +40,7 @@ describe("Parser", () => {
       postcssConfigDir: testDir,
     })
 
-    expect(parser["processor"].plugins).toHaveLength(5)
+    expect(parser["processor"].plugins).toHaveLength(7)
     expect(parser["postcssOptions"].map).toBeFalsy()
   })
 
@@ -50,7 +50,13 @@ describe("Parser", () => {
       postcssConfigDir: testDir,
       baseDir: testDir,
     })
-    const classes = parser.parse(path.resolve(testDir, "test.css"))
+    const { classes, usedClasses } = parser.parse(
+      path.resolve(testDir, "test.css")
+    )
+
+    expect(classes.has("usedValue")).toBeTruthy()
+    expect(classes.has("unusedValue")).toBeTruthy()
+    expect(classes.has("my-animation")).toBeTruthy()
     expect(classes.has("global-class")).toBeFalsy()
     expect(classes.has("dashed-class")).toBeTruthy()
     expect(classes.has("underscore_class")).toBeTruthy()
@@ -61,6 +67,16 @@ describe("Parser", () => {
       "composed-class",
       "dashed-class",
     ])
+
+    expect(usedClasses.has("usedValue")).toBeTruthy()
+    expect(usedClasses.has("unusedValue")).toBeFalsy()
+    expect(usedClasses.has("my-animation")).toBeTruthy()
+    expect(usedClasses.has("global-class")).toBeFalsy()
+    expect(usedClasses.has("dashed-class")).toBeFalsy()
+    expect(usedClasses.has("underscore_class")).toBeFalsy()
+    expect(usedClasses.has("camelCaseClass")).toBeFalsy()
+    expect(usedClasses.has("word")).toBeFalsy()
+    expect(usedClasses.has("composed-class")).toBeFalsy()
   })
 
   describe("convertClassNames", () => {

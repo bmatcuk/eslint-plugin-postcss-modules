@@ -12,6 +12,7 @@ export type CamelCaseOptions =
 export const LocalScope = "local"
 export type Scope = typeof LocalScope | "global" | "pure"
 
+/** Settings for eslint-plugin-postcss-modules */
 export interface SettingsObject {
   /** starting directory to search for postcss config */
   postcssConfigDir: string
@@ -42,4 +43,13 @@ export interface SettingsObject {
    * Defaults to /\/node_modules\//
    */
   exclude: Matcher
+}
+
+/** Value returned by parse() */
+export interface ParseResult {
+  /** Classes that are exported by the file */
+  classes: ReadonlyMap<string, string[]>
+
+  /** Classes used within the file itself */
+  usedClasses: ReadonlySet<string>
 }

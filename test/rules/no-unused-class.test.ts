@@ -54,7 +54,9 @@ describe("no-unused-class", () => {
     ["class1", ["class1"]],
     ["class2", ["class2"]],
     ["class3", ["class3", "class2"]],
+    ["class4", ["class4"]],
   ])
+  const usedClasses = new Set(["class4"])
 
   beforeEach(() => {
     processImportDeclarationMock.mockClear()
@@ -90,6 +92,7 @@ describe("no-unused-class", () => {
         specifier,
         explicitImports: explicitImports.map((s) => buildImportSpecifier(s)),
         classes,
+        usedClasses,
       })
     }
 
@@ -131,7 +134,9 @@ describe("no-unused-class", () => {
       rule.ImportDeclaration!(node)
       ;(rule["Program:exit"] as () => void)()
 
-      const classNames = joinClassNames(Array.from(classes.keys()))
+      const classNames = joinClassNames(
+        Array.from(classes.keys()).filter((cn) => !usedClasses.has(cn))
+      )
 
       expect(reportMock).toHaveBeenCalledTimes(1)
       expect(reportMock).toHaveBeenCalledWith({

@@ -38,7 +38,9 @@ describe("no-undef-class", () => {
     ["class1", ["class1"]],
     ["class2", ["class2"]],
     ["class3", ["class3", "class2"]],
+    ["class4", ["class4"]],
   ])
+  const usedClasses = new Set(["class4"])
 
   beforeEach(() => {
     processImportDeclarationMock.mockClear()
@@ -56,6 +58,7 @@ describe("no-undef-class", () => {
         specifier,
         explicitImports: explicitImports.map((s) => buildImportSpecifier(s)),
         classes,
+        usedClasses,
       })
     }
 

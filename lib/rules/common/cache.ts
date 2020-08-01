@@ -5,6 +5,7 @@ import fs from "fs"
 
 import Settings from "../../settings"
 import Parser from "../../parser"
+import { ParseResult } from "../../types"
 
 /** Utility function to ensure a node is an ImportDeclaration */
 export const nodeIsImportDeclaration = (
@@ -33,9 +34,9 @@ export const nodeIsMemberExpression = (
   node: ESTree.Node
 ): node is ESTree.MemberExpression => node.type === "MemberExpression"
 
-/** Maps base filenames to their import declaration and exported classes */
-export interface BaseFilenameToClasses {
-  [key: string]: ReadonlyMap<string, string[]>
+/** Maps base filenames to the parser output */
+export interface BaseFilenameToParseResult {
+  [key: string]: ParseResult
 }
 
 /** Maps specifiers to their base filename and the classes it exports */
@@ -47,7 +48,7 @@ export interface SpecifierToClasses {
 }
 
 /** Return value from processImportDeclaration */
-export interface ProcessedImportDeclaration {
+export interface ProcessedImportDeclaration extends ParseResult {
   /** The ImportDeclaration node */
   node: ESTree.ImportDeclaration
 
@@ -66,9 +67,6 @@ export interface ProcessedImportDeclaration {
    *   `import { a, b, c } from "..."
    */
   explicitImports: ESTree.ImportSpecifier[]
-
-  /** Classes that are exported by the file */
-  classes: ReadonlyMap<string, string[]>
 }
 
 /** Return value from processMemberExpression */
@@ -88,7 +86,7 @@ export interface ProcessedMemberExpression {
 
 /** This class is used to cache the results of processing a css file */
 export class Cache {
-  private static filenameToClasses: BaseFilenameToClasses = {}
+  private static filenameToParseResult: BaseFilenameToParseResult = {}
   private specifierToClasses: SpecifierToClasses
   private settings: Settings
   private parser: Parser
@@ -105,7 +103,7 @@ export class Cache {
 
   /** Clear the cache */
   static clear(): void {
-    Cache.filenameToClasses = {}
+    Cache.filenameToParseResult = {}
   }
 
   /**
@@ -151,18 +149,18 @@ export class Cache {
       }
     })
 
-    const classes =
-      Cache.filenameToClasses[filename] !== undefined
-        ? Cache.filenameToClasses[filename]
+    const result =
+      Cache.filenameToParseResult[filename] !== undefined
+        ? Cache.filenameToParseResult[filename]
         : this.parser.parse(filename)
     if (specifier) {
       this.specifierToClasses[specifier] = {
         filename,
-        classes,
+        classes: result.classes,
       }
     }
-    if (Cache.filenameToClasses[filename] === undefined) {
-      Cache.filenameToClasses[filename] = classes
+    if (Cache.filenameToParseResult[filename] === undefined) {
+      Cache.filenameToParseResult[filename] = result
     }
 
     return {
@@ -170,7 +168,7 @@ export class Cache {
       filename,
       specifier,
       explicitImports,
-      classes,
+      ...result,
     }
   }
 

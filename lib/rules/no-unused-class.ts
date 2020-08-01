@@ -53,7 +53,13 @@ export default createRule({
           return
         }
 
-        const { node: importNode, filename, classes, explicitImports } = result
+        const {
+          node: importNode,
+          filename,
+          classes,
+          explicitImports,
+          usedClasses,
+        } = result
         const unusedClasses =
           filenameToUnusedClasses[filename] !== undefined
             ? filenameToUnusedClasses[filename].unusedClasses
@@ -65,6 +71,7 @@ export default createRule({
         })
 
         if (filenameToUnusedClasses[filename] === undefined) {
+          usedClasses.forEach((used) => unusedClasses.delete(used))
           filenameToUnusedClasses[filename] = {
             importNode,
             unusedClasses,

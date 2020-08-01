@@ -1,5 +1,10 @@
 import fs from "fs"
-import postcss, { Processor, ProcessOptions, Root } from "postcss"
+import postcss, {
+  Processor,
+  ProcessOptions,
+  ResultMessage,
+  Root,
+} from "postcss"
 import postcssrc from "postcss-load-config"
 import postcssValues from "postcss-modules-values"
 import postcssLocalByDefault from "postcss-modules-local-by-default"
@@ -10,6 +15,14 @@ import camelcase from "camelcase"
 
 import Settings from "./settings"
 import sync from "./sync"
+import usedValues from "./plugins/used-values"
+import usedKeyframes from "./plugins/used-keyframes"
+import { ParseResult } from "./types"
+
+interface ProcessResult {
+  root: Root | undefined
+  messages: ResultMessage[]
+}
 
 /**
  * Parser will parse a css file using postcss and then extract local class
@@ -39,6 +52,7 @@ export default class Parser {
     // The following plugins are used by css-loader to create the actual
     // exports, so, by using them, we should get the same results.
     this.processor
+      .use(usedValues)
       .use(postcssValues)
       .use(postcssLocalByDefault({ mode: this.settings.defaultScope }))
       .use(postcssExtractImports())
@@ -49,6 +63,7 @@ export default class Parser {
           generateScopedName: (name) => name,
         })
       )
+      .use(usedKeyframes)
   }
 
   /**
@@ -60,36 +75,59 @@ export default class Parser {
    * will be a one-to-one mapping. However, if a class `composes` other
    * classes, then the class will map to multiple classes.
    */
-  parse(filename: string): ReadonlyMap<string, string[]> {
+  parse(filename: string): ParseResult {
     // read the file
     const css = fs.readFileSync(filename)
 
     // extract local class names
-    const map = new Map<string, string[]>()
+    const classes = new Map<string, string[]>()
+    const usedClasses = new Set<string>()
     const options = { ...this.postcssOptions, from: filename }
-    const root = this.process(css.toString(), options)
+    const { root, messages } = this.process(css.toString(), options)
     if (root) {
       const { icssExports } = extractICSS(root, false)
       Object.entries(icssExports).forEach(([key, value]) => {
         const classNames = this.convertClassNames(value.split(" "))
-        this.convertClassName(key).forEach((cn) => map.set(cn, classNames))
+        this.convertClassName(key).forEach((cn) => classes.set(cn, classNames))
       })
+
+      this.collectUsedClasses(messages, usedClasses)
     }
-    return map
+    return { classes, usedClasses }
   }
 
-  private process(css: string, options: ProcessOptions): Root | undefined {
+  private process(css: string, options: ProcessOptions): ProcessResult {
     // unfortunately, eslint does not support asynchronous plugins, so we have
     // to make this run synchronously
     if (this.syncOk) {
       try {
         // if we're using any asynchronous postcss plugins, this will throw
-        return this.processor.process(css, options).root
+        const { root, messages } = this.processor.process(css, options)
+        return { root, messages }
       } catch (_) {
         this.syncOk = false
       }
     }
-    return sync(this.processor.process(css, options)).root
+    const { root, messages } = sync(this.processor.process(css, options))
+    return { root, messages }
+  }
+
+  protected collectUsedClasses(
+    messages: ResultMessage[],
+    used: Set<string>
+  ): void {
+    messages.forEach((message) => {
+      if (message.type === "used-values" && message.plugin === "used-values") {
+        message.usedValues.forEach((usedValue: string) => used.add(usedValue))
+      } else if (
+        message.type === "used-keyframes" &&
+        message.plugin === "used-keyframes"
+      ) {
+        message.usedKeyframes.forEach((usedKeyframe: string) =>
+          used.add(usedKeyframe)
+        )
+      }
+    })
   }
 
   protected loadConfig(): Pick<

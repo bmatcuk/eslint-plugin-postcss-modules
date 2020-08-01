@@ -1,5 +1,13 @@
+@value usedValue: #f00;
+@value unusedValue: #0f0;
+
+@keyframes my-animation {
+  from { color: red; }
+  to { color: green; }
+}
+
 :global(.global-class) {
-  color: red;
+  color: usedValue;
 
   .word {
     background: green;
@@ -20,4 +28,5 @@
 
 .composed-class {
   composes: dashed-class;
+  animation: my-animation 3s ease-in;
 }

@@ -3,6 +3,7 @@ import { Rule } from "eslint"
 import * as ESTree from "estree"
 
 import { Cache } from "rules/common"
+import { ParseResult } from "types"
 import {
   buildImportDeclaration,
   buildImportSpecifier,
@@ -21,9 +22,12 @@ fs.existsSync = existsSyncMock
 
 // mock Parser so these tests don't rely on the correctness of Parser
 const parseMock = jest
-  .fn<Map<string, string[]>, [string]>()
+  .fn<ParseResult, [string]>()
   .mockName("parse")
-  .mockReturnValue(new Map())
+  .mockReturnValue({
+    classes: new Map(),
+    usedClasses: new Set(),
+  })
 jest.mock("parser", () =>
   jest.fn(() => ({
     parse: parseMock,
@@ -50,7 +54,10 @@ describe("Cache", () => {
     ["class1", ["class1"]],
     ["class2", ["class2"]],
     ["class3", ["class3", "class2"]],
+    ["class4", ["class4"]],
   ])
+  const usedClasses = new Set(["class4"])
+  const parseResult = { classes, usedClasses }
 
   describe("processImportDeclaration", () => {
     describe("errors", () => {
@@ -96,7 +103,7 @@ describe("Cache", () => {
         buildImportDefaultSpecifier(specifier),
         ...explicitImports,
       ])
-      parseMock.mockReturnValueOnce(classes)
+      parseMock.mockReturnValueOnce(parseResult)
 
       const result = cache.processImportDeclaration(node)
       expect(parseMock).toHaveBeenCalledTimes(1)
@@ -109,6 +116,7 @@ describe("Cache", () => {
       expect(result).toHaveProperty("specifier", specifier)
       expect(result).toHaveProperty("explicitImports", explicitImports)
       expect(result).toHaveProperty("classes", classes)
+      expect(result).toHaveProperty("usedClasses", usedClasses)
     })
 
     test("warm cache", () => {
@@ -123,7 +131,7 @@ describe("Cache", () => {
       ])
 
       // warm the cache
-      parseMock.mockReturnValueOnce(classes)
+      parseMock.mockReturnValueOnce(parseResult)
       cache.processImportDeclaration(node)
       parseMock.mockClear()
 
@@ -146,6 +154,7 @@ describe("Cache", () => {
       expect(result).toHaveProperty("specifier", specifier2)
       expect(result).toHaveProperty("explicitImports", explicitImports2)
       expect(result).toHaveProperty("classes", classes)
+      expect(result).toHaveProperty("usedClasses", usedClasses)
     })
   })
 
@@ -161,7 +170,7 @@ describe("Cache", () => {
       const node = buildImportDeclaration(filename, [
         buildImportDefaultSpecifier(specifier),
       ])
-      parseMock.mockReturnValueOnce(classes)
+      parseMock.mockReturnValueOnce(parseResult)
       cache.processImportDeclaration(node)
       parseMock.mockClear()
     })
