@@ -65,9 +65,9 @@ examples of the options and their default values:
       "baseDir": "cwd",
       "camelCase": false,
       "defaultScope": "local",
-      "include": /\.css$/,
-      "exclude": /\/node_modules\//
-    },
+      "include": "**/*.css",
+      "exclude": "**/node_modules/**/*"
+    }
   }
 }
 ```
@@ -111,15 +111,17 @@ examples of the options and their default values:
   > classes which are not explicitly declared as being global or local using
   > `:global` or `:local`. The default is `"local"`.
 
-* **include** _(default: `/\.css$/`)_
+* **include** _(default: `"**/*.css"`)_
   > An [anymatch] matcher to determine what files should be parsed for
   > css-module exports. Any file which matches _include_ but does not match
-  > _exclude_ will be parsed.
+  > _exclude_ will be parsed. Note that due to the way eslint combines
+  > settings, you cannot use a regex here.
 
-* **exclude** _(default: `/\/node_modules\//`)_
+* **exclude** _(default: `"**/node_modules/**/*"`)_
   > An [anymatch] matcher to determine what files should _not_ be parsed for
   > css-module exports. Any file which matches _include_ but does not match
-  > _exclude_ will be parsed.
+  > _exclude_ will be parsed. Note that due to the way eslint combines
+  > settings, you cannot use a regex here.
 
 [anymatch]: https://github.com/micromatch/anymatch
 [camelCase option]: https://github.com/webpack-contrib/css-loader/tree/v2.1.1#camelcase

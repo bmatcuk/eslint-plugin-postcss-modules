@@ -20,8 +20,8 @@ describe("Settings", () => {
     expect(settings).toHaveProperty("baseDir", "")
     expect(settings).toHaveProperty("camelCase", false)
     expect(settings).toHaveProperty("defaultScope", LocalScope)
-    expect(settings).toHaveProperty("include", /\.css$/)
-    expect(settings).toHaveProperty("exclude", /\/node_modules\//)
+    expect(settings).toHaveProperty("include", "**/*.css")
+    expect(settings).toHaveProperty("exclude", "**/node_modules/**/*")
   })
 
   test("Specifying Options", () => {
@@ -29,8 +29,8 @@ describe("Settings", () => {
     const baseDir = postcssConfigDir
     const camelCase = true
     const defaultScope = "global"
-    const include = /\.scss$/
-    const exclude = /\.global.scss$/
+    const include = "**/*.scss"
+    const exclude = "**/*.global.scss"
     context.settings["postcss-modules"] = {
       postcssConfigDir,
       baseDir,

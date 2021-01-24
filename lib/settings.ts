@@ -33,8 +33,8 @@ export default class Settings implements SettingsObject {
     this.camelCase =
       typeof settings.camelCase !== "undefined" ? settings.camelCase : false
     this.defaultScope = settings.defaultScope || LocalScope
-    this.include = settings.include || /\.css$/
-    this.exclude = settings.exclude || /\/node_modules\//
+    this.include = settings.include || "**/*.css"
+    this.exclude = settings.exclude || "**/node_modules/**/*"
   }
 
   /**
