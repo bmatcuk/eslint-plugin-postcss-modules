@@ -1,10 +1,6 @@
 import fs from "fs"
-import postcss, {
-  Processor,
-  ProcessOptions,
-  ResultMessage,
-  Root,
-} from "postcss"
+import postcss, { Message, ProcessOptions, Root } from "postcss"
+import type { Processor } from "postcss"
 import postcssrc from "postcss-load-config"
 import postcssValues from "postcss-modules-values"
 import postcssLocalByDefault from "postcss-modules-local-by-default"
@@ -20,8 +16,8 @@ import usedKeyframes from "./plugins/used-keyframes"
 import { ParseResult } from "./types"
 
 interface ProcessResult {
-  root: Root | undefined
-  messages: ResultMessage[]
+  root: Root
+  messages: Message[]
 }
 
 /**
@@ -52,8 +48,8 @@ export default class Parser {
     // The following plugins are used by css-loader to create the actual
     // exports, so, by using them, we should get the same results.
     this.processor
-      .use(usedValues)
-      .use(postcssValues)
+      .use(usedValues())
+      .use(postcssValues())
       .use(postcssLocalByDefault({ mode: this.settings.defaultScope }))
       .use(postcssExtractImports())
       .use(
@@ -63,7 +59,7 @@ export default class Parser {
           generateScopedName: (name) => name,
         })
       )
-      .use(usedKeyframes)
+      .use(usedKeyframes())
   }
 
   /**
@@ -102,20 +98,17 @@ export default class Parser {
     if (this.syncOk) {
       try {
         // if we're using any asynchronous postcss plugins, this will throw
-        const { root, messages } = this.processor.process(css, options)
-        return { root, messages }
+        const { root, messages } = this.processor.process(css, options).sync()
+        return { root: root as Root, messages }
       } catch (_) {
         this.syncOk = false
       }
     }
     const { root, messages } = sync(this.processor.process(css, options))
-    return { root, messages }
+    return { root: root as Root, messages }
   }
 
-  protected collectUsedClasses(
-    messages: ResultMessage[],
-    used: Set<string>
-  ): void {
+  protected collectUsedClasses(messages: Message[], used: Set<string>): void {
     messages.forEach((message) => {
       if (message.type === "used-values" && message.plugin === "used-values") {
         message.usedValues.forEach((usedValue: string) => used.add(usedValue))
