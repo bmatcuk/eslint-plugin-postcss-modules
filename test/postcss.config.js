@@ -1,8 +1,10 @@
-const postcss = require("postcss")
+const noopPlugin = () => ({
+  postcssPlugin: "noop",
+})
 
-const noopPlugin = postcss.plugin("noop", () => () => {})
+noopPlugin.postcss = true
 
 module.exports = {
   map: true,
-  plugins: [noopPlugin],
+  plugins: [noopPlugin()],
 }

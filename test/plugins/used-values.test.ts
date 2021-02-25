@@ -1,6 +1,4 @@
-import {
-  Result,
-  ResultMessage,
+import postcss, {
   atRule as makeAtRule,
   decl as makeDecl,
   root as makeRoot,
@@ -9,23 +7,14 @@ import {
 
 import usedValues from "plugins/used-values"
 
-const result = {
-  messages: {
-    push: jest.fn<void, [ResultMessage]>().mockName("messages.push"),
-  },
-}
-
 describe("used-values", () => {
   const plugin = usedValues()
-
-  beforeEach(() => {
-    result.messages.push.mockClear()
-  })
+  const processor = postcss([plugin])
 
   test("no values", () => {
     const root = makeRoot()
-    plugin(root, (result as unknown) as Result)
-    expect(result.messages.push).not.toHaveBeenCalled()
+    const result = processor.process(root)
+    expect(result.messages).toEqual([])
   })
 
   test("an unused value", () => {
@@ -35,8 +24,8 @@ describe("used-values", () => {
         params: "unused: #f00",
       })
     )
-    plugin(root, (result as unknown) as Result)
-    expect(result.messages.push).not.toHaveBeenCalled()
+    const result = processor.process(root)
+    expect(result.messages).toEqual([])
   })
 
   test("a used value in a decl", () => {
@@ -54,16 +43,15 @@ describe("used-values", () => {
         })
       )
     )
-    plugin(root, (result as unknown) as Result)
+    const result = processor.process(root)
 
-    expect(result.messages.push).toHaveBeenCalledTimes(1)
-    expect(result.messages.push).toHaveBeenCalledWith(
-      expect.objectContaining({
+    expect(result.messages).toEqual([
+      {
         type: "used-values",
         plugin: "used-values",
         usedValues: expect.arrayContaining(["used-value"]),
-      })
-    )
+      },
+    ])
   })
 
   test("a used value in a rule", () => {
@@ -76,16 +64,15 @@ describe("used-values", () => {
         selector: "used-value",
       })
     )
-    plugin(root, (result as unknown) as Result)
+    const result = processor.process(root)
 
-    expect(result.messages.push).toHaveBeenCalledTimes(1)
-    expect(result.messages.push).toHaveBeenCalledWith(
-      expect.objectContaining({
+    expect(result.messages).toEqual([
+      {
         type: "used-values",
         plugin: "used-values",
         usedValues: expect.arrayContaining(["used-value"]),
-      })
-    )
+      },
+    ])
   })
 
   test("a used value in a atRule", () => {
@@ -99,15 +86,14 @@ describe("used-values", () => {
         params: "unused-value: used-value",
       })
     )
-    plugin(root, (result as unknown) as Result)
+    const result = processor.process(root)
 
-    expect(result.messages.push).toHaveBeenCalledTimes(1)
-    expect(result.messages.push).toHaveBeenCalledWith(
-      expect.objectContaining({
+    expect(result.messages).toEqual([
+      {
         type: "used-values",
         plugin: "used-values",
         usedValues: expect.arrayContaining(["used-value"]),
-      })
-    )
+      },
+    ])
   })
 })
