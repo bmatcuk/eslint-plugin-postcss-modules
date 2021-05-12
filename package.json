@@ -72,7 +72,7 @@
     "camelcase": "^6.0.0",
     "deasync": "^0.1.0",
     "icss-utils": "^4.1.0",
-    "postcss": "^7.0.0",
+    "postcss": "^8.2.10",
     "postcss-load-config": "^2.1.0",
     "postcss-modules-extract-imports": "~2.0.0",
     "postcss-modules-local-by-default": "^3.0.2",
