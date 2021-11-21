@@ -1,6 +1,5 @@
 import fs from "fs"
 import postcss, { Message, ProcessOptions, Root } from "postcss"
-import type { Processor } from "postcss"
 import postcssrc from "postcss-load-config"
 import postcssValues from "postcss-modules-values"
 import postcssLocalByDefault from "postcss-modules-local-by-default"
@@ -14,6 +13,8 @@ import sync from "./sync"
 import usedValues from "./plugins/used-values"
 import usedKeyframes from "./plugins/used-keyframes"
 import { ParseResult } from "./types"
+
+type Processor = ReturnType<typeof postcss>
 
 interface ProcessResult {
   root: Root
