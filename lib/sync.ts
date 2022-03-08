@@ -1,5 +1,3 @@
-import { loopWhile } from "deasync"
-
 export default <T>(promise: { then: Promise<T>["then"] }): T => {
   let done = false
   let result: T | null = null
@@ -16,6 +14,8 @@ export default <T>(promise: { then: Promise<T>["then"] }): T => {
     }
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { loopWhile } = require("deasync")
   loopWhile(() => !done)
 
   if (err !== null) {
