@@ -93,30 +93,57 @@ describe("Cache", () => {
       })
     })
 
-    test("cold cache", () => {
+    describe("cold cache", () => {
       const filename = "test.css"
       const specifier = "styles"
       const explicitImports = [buildImportSpecifier("class1")]
 
-      const cache = buildCache()
-      const node = buildImportDeclaration(filename, [
-        buildImportDefaultSpecifier(specifier),
-        ...explicitImports,
-      ])
-      parseMock.mockReturnValueOnce(parseResult)
+      let cache: Cache
+      beforeEach(() => {
+        cache = buildCache()
+      })
 
-      const result = cache.processImportDeclaration(node)
-      expect(parseMock).toHaveBeenCalledTimes(1)
-      expect(result).not.toBeNull()
-      expect(result).toHaveProperty("node", node)
-      expect(result).toHaveProperty(
-        "filename",
-        expect.stringMatching(new RegExp(`${filename}$$`))
-      )
-      expect(result).toHaveProperty("specifier", specifier)
-      expect(result).toHaveProperty("explicitImports", explicitImports)
-      expect(result).toHaveProperty("classes", classes)
-      expect(result).toHaveProperty("usedClasses", usedClasses)
+      test("default import", () => {
+        const node = buildImportDeclaration(filename, [
+          buildImportDefaultSpecifier(specifier),
+          ...explicitImports,
+        ])
+        parseMock.mockReturnValueOnce(parseResult)
+
+        const result = cache.processImportDeclaration(node)
+        expect(parseMock).toHaveBeenCalledTimes(1)
+        expect(result).not.toBeNull()
+        expect(result).toHaveProperty("node", node)
+        expect(result).toHaveProperty(
+          "filename",
+          expect.stringMatching(new RegExp(`${filename}$$`))
+        )
+        expect(result).toHaveProperty("specifier", specifier)
+        expect(result).toHaveProperty("explicitImports", explicitImports)
+        expect(result).toHaveProperty("classes", classes)
+        expect(result).toHaveProperty("usedClasses", usedClasses)
+      })
+
+      test("namespace import", () => {
+        const node = buildImportDeclaration(filename, [
+          buildImportNamespaceSpecifier(specifier),
+          ...explicitImports,
+        ])
+        parseMock.mockReturnValueOnce(parseResult)
+
+        const result = cache.processImportDeclaration(node)
+        expect(parseMock).toHaveBeenCalledTimes(1)
+        expect(result).not.toBeNull()
+        expect(result).toHaveProperty("node", node)
+        expect(result).toHaveProperty(
+          "filename",
+          expect.stringMatching(new RegExp(`${filename}$$`))
+        )
+        expect(result).toHaveProperty("specifier", specifier)
+        expect(result).toHaveProperty("explicitImports", explicitImports)
+        expect(result).toHaveProperty("classes", classes)
+        expect(result).toHaveProperty("usedClasses", usedClasses)
+      })
     })
 
     test("warm cache", () => {
