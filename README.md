@@ -131,3 +131,29 @@ examples of the options and their default values:
 [localsConvention option]: https://github.com/webpack-contrib/css-loader/tree/v3.0.0#localsconvention
 [postcss]: https://postcss.org/
 [postcss-load-config]: https://github.com/michael-ciniawsky/postcss-load-config
+
+### Sass Modules
+
+To load `*.module.scss` files written in SCSS, install the [`postcss-scss`](https://github.com/postcss/postcss-scss) package:
+
+```bash
+npm i -D postcss-scss
+```
+
+Create a `postcss.config.js` file with the following:
+```js
+module.exports = {
+  syntax: "postcss-scss",
+};
+```
+
+Then set the `include` option in your ESLint config:
+```js
+{
+  "settings": {
+    "postcss-modules": {
+      "include": "**/*.module.scss"
+    }
+  }
+}
+```
