@@ -141,7 +141,7 @@ export class Cache {
         explicitImports.push(spec)
       } else if (
         nodeIsImportDefaultSpecifier(spec) ||
-        nodeIsImportNamespaceSpecifier(node)
+        nodeIsImportNamespaceSpecifier(spec)
       ) {
         // import styles from '...'
         // import * as styles from '...'
